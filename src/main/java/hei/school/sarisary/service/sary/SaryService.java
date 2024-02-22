@@ -67,7 +67,7 @@ public class SaryService {
     }
 
     private String createBuckerKey(String id){
-        return String.format("%s/%s", path, id);
+        return id;
     }
     private String createTransformBuckerKey(String id){
         return createBuckerKey(String.format("transform-%s", id));
