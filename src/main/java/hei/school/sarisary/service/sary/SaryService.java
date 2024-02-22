@@ -1,10 +1,12 @@
 package hei.school.sarisary.service.sary;
 
 import hei.school.sarisary.file.BucketComponent;
+import hei.school.sarisary.repository.model.GrayBody;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,6 +16,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 @AllArgsConstructor
 @Getter
@@ -48,9 +51,25 @@ public class SaryService {
     }
 
     public void grayScale(MultipartFile image) throws IOException {
-        File file = new File(String.format("%s/%s", path, image.getOriginalFilename()));
+        File old = Files.createTempFile(createBuckerKey(image.getOriginalFilename()), ".png").toFile();
+        sendFile(old, createBuckerKey(image.getOriginalFilename()));
         BufferedImage result = convertToGrayscale(convertToBufferedImage(convertMultipartFileToBufferedImage((image))));
-        ImageIO.write(result, "png", file);
-        sendFile(file, bucketComponent.getBucketName());
+        File transform = Files.createTempFile(createTransformBuckerKey(image.getOriginalFilename()), ".png").toFile();
+        ImageIO.write(result, "png", transform);
+        sendFile(transform, createTransformBuckerKey(image.getOriginalFilename()));
+    }
+
+    public GrayBody getImage(String id){
+        GrayBody result = new GrayBody();
+        result.setOriginal_url(bucketComponent.download(createBuckerKey(id)));
+        result.setTransformed_url(bucketComponent.download(createBuckerKey(id)));
+        return result;
+    }
+
+    private String createBuckerKey(String id){
+        return String.format("%s/%s", path, id);
+    }
+    private String createTransformBuckerKey(String id){
+        return createBuckerKey(String.format("transform-%s", id));
     }
 }

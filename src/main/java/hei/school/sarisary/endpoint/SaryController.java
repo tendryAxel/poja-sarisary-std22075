@@ -1,5 +1,6 @@
 package hei.school.sarisary.endpoint;
 
+import hei.school.sarisary.repository.model.GrayBody;
 import hei.school.sarisary.service.sary.SaryService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,5 +28,9 @@ public class SaryController {
     public ResponseEntity<String> send(@PathVariable String id, @RequestPart MultipartFile image) throws IOException {
         saryService.grayScale(image);
         return OK;
+    }
+    @GetMapping(value = "/black-and-white/{id}", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public ResponseEntity<GrayBody> receive(@PathVariable String id) throws IOException {
+        return ResponseEntity.ok(saryService.getImage(id));
     }
 }
