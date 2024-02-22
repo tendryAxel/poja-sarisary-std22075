@@ -61,8 +61,8 @@ public class SaryService {
 
     public GrayBody getImage(String id){
         GrayBody result = new GrayBody();
-        result.setOriginal_url(bucketComponent.download(createBuckerKey(id)));
-        result.setTransformed_url(bucketComponent.download(createBuckerKey(id)));
+        result.setOriginal_url(bucketComponent.download(createBuckerKey(id)).getAbsolutePath());
+        result.setTransformed_url(bucketComponent.download(createBuckerKey(id)).getAbsolutePath());
         return result;
     }
 
